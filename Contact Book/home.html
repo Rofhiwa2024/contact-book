@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Book</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <h1>Contact Book Home</h1>
+    <nav>
+        <a href="home.html"><button>Home</button></a>
+        <a href="index.html"><button>Manage Contacts</button></a>
+    </nav>
+</header>
+<div id="summary"></div>
+<div id="contact-numbers"></div>
+<div id="contact-list"></div>
+<script>
+    // Get contacts from localStorage
+    const contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+
+    // Display total number of contacts
+    const summary = document.getElementById('summary');
+    summary.innerHTML = `<h2>Total Saved Contacts: ${contacts.length}</h2>`;
+
+    // Display names and mobile numbers
+    const contactNumbers = document.getElementById('contact-numbers');
+    if (contacts.length === 0) {
+        contactNumbers.innerHTML = "<p>No contacts saved.</p>";
+    } else {
+        let list = "<h3>Contact Names & Mobiles:</h3><ul>";
+        contacts.forEach(contact => {
+            list += `<li><strong>${contact.fullName}</strong>: ${contact.mobile || ''}</li>`;
+        });
+        list += "</ul>";
+        contactNumbers.innerHTML = list;
+    }
+
+    // Display all saved contacts with details (Full Name, Mobile, Email)
+    const contactList = document.getElementById('contact-list');
+    if (contacts.length === 0) {
+        contactList.innerHTML = "<p>No contacts to display.</p>";
+    } else {
+        contactList.innerHTML = "<h3>All Saved Contacts:</h3>";
+        contacts.forEach(contact => {
+            const div = document.createElement('div');
+            div.className = "contact";
+            div.innerHTML = `
+                <span class="contact-name"><strong>Full Name:</strong> ${contact.fullName}</span>
+                <span class="contact-mobile"><strong>Mobile:</strong> ${contact.mobile || ''}</span>
+                <span class="contact-email"><strong>Email:</strong> ${contact.email || ''}</span>
+            `;
+            contactList.appendChild(div);
+        });
+    }
+function displayOutput(data) {
+        let output = "<table>";
+        for (let a in data) {
+            output +=
+                `<tr>
+                    <td><img src="${rootpath}controller/uploads/${data[a].avatar}" alt="avatar" style="width:40px;height:40px;border-radius:50%;"/></td>
+                    <td><h5>${data[a].fullName}</h5></td>
+                    <td>${data[a].mobile || ''}</td>
+                    <td>${data[a].email || ''}</td>
+                </tr>`;
+        }
+        output += "</table>";
+        document.getElementById("contact-list").innerHTML = output;
+    }
+
+    function fetchContacts() {
+        fetch(rootpath + "controller/contacts/?apiKey=" + localStorage.getItem("apiKey"))
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    displayOutput(data);
+                } else {
+                    document.getElementById("contact-list").innerHTML = "<p>No contacts found.</p>";
+                }
+            })
+            .catch(error => console.error('Error fetching contacts:', error));
+    }
+
+    // Fetch contacts on page load
+    fetchContacts();
+</script>
+<script src="config.js"></script>
+</body>
+</html>

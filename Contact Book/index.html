@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Book</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <h1>Contacts</h1>
+    <nav>
+        <a href="home.html"><button>Home</button></a>
+        <button id="add-contact-btn">+</button>
+    </nav>
+</header>
+<div id="contact-list"></div>
+<div id="add-contact-form" style="display: none;">
+    <input type="text" id="fullName" placeholder="Full Name">
+    <input type="text" id="mobile" placeholder="Mobile Number">
+    <input type="email" id="email" placeholder="Email">
+    <button id="save-contact-btn">Save</button>
+    <button id="cancel-btn">Cancel</button>
+</div>
+<div id="edit-contact-form" style="display: none;">
+    <input type="text" id="edit-fullName" placeholder="Full Name">
+    <input type="text" id="edit-mobile" placeholder="Mobile Number">
+    <input type="email" id="edit-email" placeholder="Email">
+    <button id="update-contact-btn">Update</button>
+    <button id="cancel-edit-btn">Cancel</button>
+</div>
+<!-- Link your JavaScript at the end of body -->
+<script src="script.js"></script>
+</body>
+</html>

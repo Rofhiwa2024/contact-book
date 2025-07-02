@@ -1,0 +1,5 @@
+div.innerHTML = `
+    <span class="contact-name"><strong>Full Name:</strong> ${contact.fullName}</span>
+    <span class="contact-mobile"><strong>Mobile:</strong> ${contact.mobile || ''}</span>
+    <span class="contact-email"><strong>Email:</strong> ${contact.email || ''}</span>
+`;

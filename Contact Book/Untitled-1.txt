@@ -1,0 +1,6 @@
+<div id="summary"></div>
+<div id="contact-numbers"></div>
+<div id="delete-controls" style="display:none; text-align:center; margin-bottom:16px;">
+    <button id="delete-selected-btn" style="background:#ff3b30;color:#fff;border:none;padding:8px 18px;border-radius:14px;font-weight:600;font-size:1rem;cursor:pointer;box-shadow:0 1px 4px rgba(255,59,48,0.08);transition:background 0.2s;">Delete Selected</button>
+</div>
+<div id="contact-list"></div>
