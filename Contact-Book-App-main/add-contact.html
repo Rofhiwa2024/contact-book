@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>add-contact</title>
+</head>
+
+<body>
+    <br>
+    <!-- Contact input form -->
+    <form id="editForm">
+        <!-- First name field -->
+        <label for="firstname">First Name</label>
+        <input type="text" name="firstname" id="firstname"><br>
+
+        <!-- Last name field -->
+        <label for="lastname">Last Name</label>
+        <input type="text" name="lastname" id="lastname"><br>
+
+        <!-- Email field -->
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email"><br>
+
+        <!-- File input for avatar upload -->
+        <label for="avatar">Select a file</label>
+        <input type="file" name="avatar" id="avatar"><br><br>
+
+        <!-- Submit button -->
+        <button id="submitForm">Submit</button>
+    </form>
+
+    <br><br>
+
+    <!-- Home button -->
+    <button id="homeLink">Home</button>
+
+    <!-- External config script (defines apiKey, rootPath, etc.) -->
+    <script src="config.js"></script>
+
+    <script>
+        // Add click event listener to the Submit button
+        document.getElementById("submitForm").addEventListener('click', submitForm);
+
+        // Add click event listener to the Home button
+        document.getElementById("homeLink").addEventListener('click', homeLink);
+
+        // Function to handle form submission
+        function submitForm(e) {
+            e.preventDefault(); // Prevents default form submit (which would reload the page)
+
+            // Create FormData object from the form's input values
+            const form = new FormData(document.querySelector('#editForm'));
+
+            // Append API key to the form data
+            form.append('apiKey', apiKey);
+
+            // Send form data to the server using POST request
+            fetch(rootPath + 'controller/insert-contact/', {
+                method: 'POST',
+                headers: { 'Accept': 'application/json, *.*' }, // Tell server we accept JSON
+                body: form // Attach form data as the request body
+            })
+                .then(function (response) {
+                    return response.text(); // Convert server response to text
+                })
+                .then(function (data) {
+                    // If server responds with "1", it means success
+                    if (data == "1") {
+                        alert("Contact added!");
+                        // Redirect to homepage
+                        homeLink();
+                    } else {
+                        alert(data); // Show error message
+                        // Redirect to homepage even if there’s an error
+                        homeLink();
+                    }
+                });
+        }
+
+        // Function to redirect user to index.html
+        function homeLink() {
+            window.open("index.html", "_self"); // Open homepage in same tab
+        }
+    </script>
+</body>
+
+</html>

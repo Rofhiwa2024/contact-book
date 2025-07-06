@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Contact Book App</title>
+</head>
+<body onload="getContacts()"> 
+    <!-- When the page loads, it automatically calls the getContacts() function to fetch and display contacts -->
+
+    <div id="table">Contacts loading...</div> 
+    <!-- This div will be replaced with a table of contacts once data is fetched -->
+
+    <button id="refresh">Refresh</button> 
+    <!-- Button to manually refresh the list of contacts -->
+
+    <button id="addContact">Add Contact</button> 
+    <!-- Button to open the add-contact page -->
+
+    <script src="config.js"></script> 
+    <!-- External JS file where rootPath and apiKey are likely defined -->
+
+    <script>
+        // Add event listener to refresh button; calls getContacts() when clicked
+        document.getElementById("refresh").addEventListener('click', getContacts);
+
+        // Add event listener to 'Add Contact' button; opens the add-contact form
+        document.getElementById("addContact").addEventListener('click', addContact);
+
+        // Function to fetch contact data from the server
+        function getContacts() {
+            fetch(rootPath + "controller/get-contacts/") 
+            // Sends a GET request to the server to retrieve contact data
+
+            .then (function(response) {
+                return response.json(); 
+                // Converts the response to JSON format
+            })
+
+            .then (function(data) {
+                displayOutput(data); 
+                // Passes the data to a function that will render it as HTML
+            });
+        }
+
+        // Function to generate HTML output and display contacts
+        function displayOutput(data) {
+            output = "<table>"; 
+            // Start building an HTML table
+
+            for (a in data) {
+                // Loop through each contact object in the array
+
+                output += `
+                    <tr onclick="editContact(${data[a].id})">
+
+                        <td>
+                            <img src="${rootPath}controller/uploads/${data[a].avatar}" width="100" height="100">
+                            
+                        </td>
+                        <td><h5>${data[a].firstname}</h5></td>
+                       
+                        <td><h5>${data[a].lastname}</h5></td>
+                      
+                    </tr>
+                `;
+            }
+
+            output += "</table>"; 
+            // End the HTML table
+
+            document.getElementById("table").innerHTML = output; 
+            // Replace the loading text or previous content with the new table
+        }
+
+        // Function to open the add-contact page in the same tab
+        function addContact() {
+            window.open("add-contact.html", "_self");
+        }
+
+        // Function to open the edit-contact page with the selected contact's ID
+        function editContact(id) {
+            window.open("edit-contact.html?id=" + id, "_self");
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Edit contact</title>
+</head>
+
+<body onload="getContact()">
+    <!-- When page loads, it automatically fetches contact data by calling getContact() -->
+
+    <div id="avatarImage"></div>
+    <!-- Image container where the contact's avatar will be displayed -->
+
+    <form id="editForm">
+        <!-- Contact info form (all fields initially read-only) -->
+        <label for="firstname">First Name</label>
+        <input type="text" name="firstname" id="firstname" readonly><br>
+
+        <label for="lastname">Last Name</label>
+        <input type="text" name="lastname" id="lastname" readonly><br>
+
+        <label for="mobile">Mobile</label>
+        <input type="text" name="mobile" id="mobile" readonly><br>
+
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email" readonly><br>
+
+        <!-- Hidden file input for uploading a new avatar image -->
+        <label for="avatar" hidden>Change Profile Image</label>
+        <input type="file" name="avatar" id="avatar" hidden><br><br>
+
+        <!-- Hidden button to submit the form when editing -->
+        <button id="submitForm" hidden>Submit</button>
+    </form>
+
+    <br><br>
+
+    <!-- Navigation buttons -->
+    <button id="homeLink">Home</button>
+    <button id="editContact">Edit</button>
+    <button id="deleteContact">Delete</button>
+
+    <!-- External script for rootPath and apiKey -->
+    <script src="config.js"></script>
+
+    <script>
+        // Extract ID from the URL query string (?id=...)
+        let id = getId();
+
+        // Add button event listeners
+        document.getElementById("homeLink").addEventListener('click', homeLink);
+        document.getElementById("editContact").addEventListener('click', editableContact);
+        document.getElementById("submitForm").addEventListener('click', submitForm);
+        document.getElementById("deleteContact").addEventListener('click', deleteContact);
+
+        // Function to extract ID from the current page's URL
+        function getId() {
+            let url = window.location.href;
+            let position = url.search("="); // Find the position of "="
+            let id = url.slice(position + 1); // Get everything after "="
+            return id;
+        }
+
+        // Function to fetch contact data by ID
+        function getContact() {
+            fetch(rootPath + "controller/get-contacts/?id=" + id)
+                .then(function (response) {
+                    return response.json(); // Parse response JSON
+                })
+                .then(function (data) {
+                    displayOutput(data); // Display data on the form
+                });
+        }
+
+        // Redirects to homepage
+        function homeLink() {
+            window.open("index.html", "_self");
+        }
+
+        // Displays contact details in form fields
+        function displayOutput(data) {
+            let avatarImg = `
+                <img src="${rootPath}controller/uploads/${data[0].avatar}" width="100" height="100">
+            `;
+            document.getElementById("avatarImage").innerHTML = avatarImg;
+            document.getElementById("firstname").value = data[0].firstname;
+            document.getElementById("lastname").value = data[0].lastname;
+            document.getElementById("mobile").value = data[0].mobile;
+            document.getElementById("email").value = data[0].email;
+        }
+
+        // Unlock form fields for editing and reveal hidden controls
+        function editableContact() {
+            document.getElementById("firstname").readonly = false;
+            document.getElementById("lastname").readonly = false;
+            document.getElementById("mobile").readonly = false;
+            document.getElementById("email").readonly = false;
+            document.getElementById("avatar").hidden = false;
+            document.getElementById("submitForm").hidden = false;
+        }
+
+        // Submits updated contact data to the server
+        function submitForm(e) {
+            e.preventDefault(); // Prevents default button behavior (page reload)
+
+            const form = new FormData(document.querySelector("#editForm")); // Create FormData object from form
+            form.append('apiKey', apiKey); // Append API key
+            form.append('id', id); // Append contact ID
+
+            // Send updated data to the server
+            fetch(rootPath + 'controller/edit-contact/', {
+                method: 'POST',
+                headers: { 'Accept': 'application/json, *.*' },
+                body: form
+            })
+                .then(function (response) {
+                    return response.text(); // Parse text response
+                })
+                .then(function (data) {
+                    if (data == "1") {
+                        alert("Contact edited!");
+                        homeLink(); // Redirect on success
+                    } else {
+                        alert(data);
+                        homeLink(); // Redirect even on failure
+                    }
+                });
+        }
+
+        // Deletes contact from the server
+        function deleteContact() {
+            let confirmDelete = confirm("Delete contact. Are you sure?");
+
+            if (confirmDelete) {
+                fetch(rootPath + 'controller/delete-contact/?id=' + id)
+                    .then(function (response) {
+                        return response.text(); // Parse server response
+                    })
+                    .then(function (data) {
+                        if (data == "1") {
+                            alert("Contact deleted!");
+                            homeLink(); // Redirect on success
+                        } else {
+                            alert(data);
+                            homeLink(); // Redirect on error
+                        }
+                    });
+            }
+        }
+    </script>
+</body>
+
+</html>
